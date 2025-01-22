@@ -1,64 +1,70 @@
 <!--
-    This page shows books currently borrowed by the user
+    This page shows books currently borrowed by the user.
     Users can return books or extend return time.
     Author: Hao Fan
     Date: 5/2/24
     File: navbar.html
- -->
+-->
 
 <!--Nav-->
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{@BASE}}"><img src="./img/logo.webp" alt="" srcset=""></a>
+        <a class="navbar-brand" href="{{@BASE}}">
+            <img src="./img/logo.webp" alt="Library Logo">
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item px-2">
-                    <check if="{{@active == 'search'}}">
-                        <true><a class="nav-link active" aria-current="page" href="search">Catalog</a></true>
-                        <false><a class="nav-link" aria-current="page" href="search">Catalog</a></false>
+                    <check if="{{ isset(@active) && @active == 'search' }}">
+                        <true><a class="nav-link active" href="search">Catalog</a></true>
+                        <false><a class="nav-link" href="search">Catalog</a></false>
                     </check>
                 </li>
-                <check if="{{@SESSION.userId}}">
+
+                <check if="{{ isset(@SESSION.userId) && @SESSION.userId }}">
                     <li class="nav-item px-2">
-                        <check if="{{@active == 'borrows'}}">
-                            <true><a class="nav-link active" aria-current="page" href="borrows">My Borrows</a></true>
-                            <false><a class="nav-link" aria-current="page" href="borrows">My Borrows</a></false>
+                        <check if="{{ isset(@active) && @active == 'borrows' }}">
+                            <true><a class="nav-link active" href="borrows">My Borrows</a></true>
+                            <false><a class="nav-link" href="borrows">My Borrows</a></false>
                         </check>
                     </li>
                 </check>
 
                 <li class="nav-item px-2">
-                    <check if="{{@active == 'contact'}}">
-                        <true><a class="nav-link active" aria-current="page" href="contact">Contact</a></true>
-                        <false><a class="nav-link" aria-current="page" href="contact">Contact</a></false>
+                    <check if="{{ isset(@active) && @active == 'contact' }}">
+                        <true><a class="nav-link active" href="contact">Contact</a></true>
+                        <false><a class="nav-link" href="contact">Contact</a></false>
                     </check>
                 </li>
-                <check if="{{@SESSION.userId}}">
+
+                <check if="{{ isset(@SESSION.userId) && @SESSION.userId }}">
                     <li class="nav-item px-2">
-                        <check if="{{@active == 'donate'}}">
-                            <true><a class="nav-link active" aria-current="page" href="donate">Donate</a></true>
-                            <false><a class="nav-link" aria-current="page" href="donate">Donate</a></false>
+                        <check if="{{ isset(@active) && @active == 'donate' }}">
+                            <true><a class="nav-link active" href="donate">Donate</a></true>
+                            <false><a class="nav-link" href="donate">Donate</a></false>
                         </check>
                     </li>
                 </check>
+
                 <li class="nav-item px-2">
-                    <check if="{{@active == 'leaderboard'}}">
-                        <true><a class="nav-link active" aria-current="page" href="leaderboard">Donation-List</a></true>
-                        <false><a class="nav-link" aria-current="page" href="leaderboard">Donation-List</a></false>
+                    <check if="{{ isset(@active) && @active == 'leaderboard' }}">
+                        <true><a class="nav-link active" href="leaderboard">Donation-List</a></true>
+                        <false><a class="nav-link" href="leaderboard">Donation-List</a></false>
                     </check>
                 </li>
-
-
             </ul>
         </div>
-        <check if="{{@SESSION.userId}}">
+
+        <check if="{{ isset(@SESSION.userId) && @SESSION.userId }}">
             <true><a class="btn btn-outline-danger btn-logout" href="logout">Log Out</a></true>
             <false><a class="btn btn-outline-success" href="login">Login</a></false>
         </check>
-        <check if="{{@SESSION.role == 1}}">
+
+        <check if="{{ isset(@SESSION.role) && @SESSION.role == 1 }}">
             <a class="btn btn-outline-success" href="admin">Admin</a>
         </check>
     </div>

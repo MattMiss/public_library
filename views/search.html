@@ -1,11 +1,11 @@
 <!--
-    This page lets users search for a book using Google Books API
-    Books can be checked out from the library
+    This page lets users search for a book using Google Books API.
+    Books can be checked out from the library.
 
     Author: Matt Miss
     Date: 5/8/24
     File: search.html
- -->
+-->
 
 <body>
     <!--Header-->
@@ -42,95 +42,101 @@
                             </div>
                         </div>
                         <div class="col-auto ps-0">
-                            <div class="mb-3">
-                                <button type="submit" class="btn btn-primary search-btn"><i class="fa-solid fa-magnifying-glass px-2"></i></button>
+                            <div class="mb-3 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary search-btn">
+                                    <i class="fa-solid fa-magnifying-glass px-2"></i> Search
+                                </button>
+                                <button type="submit" class="btn btn-secondary" onclick="clearSearch()">
+                                    <i class="fa-solid fa-times px-2"></i> Clear
+                                </button>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
-
             </div>
         </form>
-        <!-- Book Search Results-->
+
+        <!-- Book Search Results -->
         <div class="search-results">
-            <repeat group="{{ @searchResults }}" value="{{ @result }}">
-<!--                <pre>{{var_dump(@result)}}</pre>-->
+            <check if="{{ isset(@searchResults) && @searchResults }}">
+                <repeat group="{{ @searchResults }}" value="{{ @result }}">
 
-                <check if="{{get_class(@result) == 'Book'}}">
-
-                    <div class="search-result-item p-4">
-                        <div class="row">
-                            <div class="col-md-auto">
-                                <check if="{{@result->getCover() != ''}}">
-                                    <true><img class="cover-img" src="{{@result->getCover()}}"></true>
-                                    <false><img class="cover-img" src="img/cover-placeholder.jpg"></false>
-                                </check>
-                            </div>
-                            <div class="col-md">
-                                <div class="d-flex flex-column gap-1">
-                                    <span class="book-title">{{ @result->getTitle() }}</span>
-                                    <check if ="{{@result->getAuthors()}}">
-                                        <true>
-                                            <span>by <span class="book-author">{{  implode(", ", @result->getAuthors())}}</span></span>
-                                        </true>
-                                        <false>
-                                            Author not found
-                                        </false>
-                                    </check>
-                                    <span><span class="book-pages">{{ @result->getPages() }}</span> pages</span>
-                                    <span class="book-published-date">{{date('m-d-Y', strtotime(@result->getPublishedDate()))}}</span>
-                                    <span class="book-description">{{ @result->getDescription() }}</span>
-                                </div>
-
-                            </div>
-                            <div class="col-md-auto mt-auto">
-
-                                <div class="d-flex flex-column gap-1">
-                                    <check if="{{@SESSION.userId}}">
-
-                                        <true>
-                                            <button type="button" class="btn btn-primary"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#addModal"
-                                                    data-book='{{json_encode(@result, JSON_HEX_APOS)}}'>
-                                                Check Out
-                                            </button>
-                                        </true>
-                                        <false>
-                                            <a class="btn btn-outline-success" href="login">Login/Sign Up to Check Out</a>
-                                        </false>
+                    <check if="{{ isset(@result) && get_class(@result) == 'Book' }}">
+                        <div class="search-result-item p-4">
+                            <div class="row">
+                                <div class="col-md-auto">
+                                    <check if="{{ isset(@result) && @result->getCover() != '' }}">
+                                        <true><img class="cover-img" src="{{@result->getCover()}}" alt="Book Cover"></true>
+                                        <false><img class="cover-img" src="img/cover-placeholder.jpg" alt="Placeholder"></false>
                                     </check>
                                 </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </check>
-                <check if="{{get_class(@result) == 'Magazine'}}">
-                    <div class="search-result-item p-4">
-                        <div class="row">
-                            <check if="{{@result->getCover() != ''}}">
-                                <true><img class="cover-img" src="{{@result->getCover()}}"></true>
-                                <false><img class="cover-img" src="img/cover-placeholder.jpg"></false>
-                            </check>
-                            <div class="col">
-                                <div class="d-flex flex-column gap-1">
-                                    <span class="book-title">{{ @result->getTitle() }}</span>
-                                    <span><span class="book-pages">{{ @result->getPages() }}</span> pages</span>
-                                    <span class="book-description">{{ @result->getDescription() }}</span>
+                                <div class="col-md">
+                                    <div class="d-flex flex-column gap-1">
+                                        <span class="book-title">{{ @result->getTitle() }}</span>
+                                        <check if="{{ isset(@result) && @result->getAuthors() }}">
+                                            <true>
+                                                <span>by <span class="book-author">{{ implode(", ", @result->getAuthors()) }}</span></span>
+                                            </true>
+                                            <false>Author not found</false>
+                                        </check>
+                                        <span><span class="book-pages">{{ @result->getPages() }}</span> pages</span>
+                                        <span class="book-published-date">{{ date('m-d-Y', strtotime(@result->getPublishedDate())) }}</span>
+                                        <span class="book-description">{{ @result->getDescription() }}</span>
+                                    </div>
                                 </div>
-
-                            </div>
-                            <div class="col-auto mt-auto">
-                                <div class="d-flex flex-column gap-1">
-                                    <button class="btn btn-primary" >Checks Out</button>
-                                    <button class="btn btn-danger" >Put On Hold</button>
+                                <div class="col-md-auto mt-auto">
+                                    <div class="d-flex flex-column gap-1">
+                                        <check if="{{ isset(@SESSION.userId) && @SESSION.userId }}">
+                                            <true>
+                                                <button type="button" class="btn btn-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#addModal"
+                                                        data-book='{{ json_encode(@result, JSON_HEX_APOS) }}'>
+                                                    Check Out
+                                                </button>
+                                            </true>
+                                            <false>
+                                                <a class="btn btn-outline-success" href="login">Login/Sign Up to Check Out</a>
+                                            </false>
+                                        </check>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </check>
-            </repeat>
+                    </check>
+
+                    <check if="{{ isset(@result) && get_class(@result) == 'Magazine' }}">
+                        <div class="search-result-item p-4">
+                            <div class="row">
+                                <div class="col-md-auto">
+                                    <check if="{{ isset(@result) && @result->getCover() != '' }}">
+                                        <true><img class="cover-img" src="{{@result->getCover()}}" alt="Magazine Cover"></true>
+                                        <false><img class="cover-img" src="img/cover-placeholder.jpg" alt="Placeholder"></false>
+                                    </check>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex flex-column gap-1">
+                                        <span class="book-title">{{ @result->getTitle() }}</span>
+                                        <span><span class="book-pages">{{ @result->getPages() }}</span> pages</span>
+                                        <span class="book-description">{{ @result->getDescription() }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto mt-auto">
+                                    <div class="d-flex flex-column gap-1">
+                                        <button class="btn btn-primary">Check Out</button>
+                                        <button class="btn btn-danger">Put On Hold</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </check>
+
+                </repeat>
+            </check>
+            <check if="{{ !isset(@searchResults) || empty(@searchResults) }}">
+                <p class="text-center">No results found.</p>
+            </check>
         </div>
     </div>
 
@@ -139,14 +145,13 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5">Check Out <span id="modal-header-title"></span>?</span></h1>
+                    <h1 class="modal-title fs-5">Check Out <span id="modal-header-title"></span>?</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body m-auto">
-                    <img id="modal-item-cover-preview" src="">
+                    <img id="modal-item-cover-preview" src="" alt="Book Cover Preview">
                 </div>
                 <div class="modal-footer">
-
                     <form id="save-item-form" method="post" action="add-to-database">
                         <input type="hidden" name="modal-item-title" id="modal-item-title" value="">
                         <input type="hidden" name="modal-item-description" id="modal-item-description" value="">
@@ -163,7 +168,9 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap and jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="scripts/search.js"></script>
 </body>

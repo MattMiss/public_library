@@ -9,7 +9,12 @@
 </head>
 <body>
 <!-- Header -->
-<include href="views/header.html" with="title=Payment Cancelled"></include>
+<check if="{{ isset(@title) }}">
+    <include href="views/header.html" with="title=Payment Cancelled"></include>
+</check>
+<check if="{{ !isset(@title) }}">
+    <include href="views/header.html"></include>
+</check>
 
 <!-- Navbar -->
 <include href="views/navbar.html"></include>

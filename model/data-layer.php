@@ -1,5 +1,7 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'].'/../libraryConfig.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/libraryConfig.php');
+$dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
+$dotenv->load();
 
 /**
  * Class DataLayer
@@ -18,7 +20,7 @@ class DataLayer
      */
     public function __construct() {
         // Require my PDO database connection credentials
-        require_once($_SERVER['DOCUMENT_ROOT'].'/../libraryConfig.php');
+        require_once($_SERVER['DOCUMENT_ROOT'].'/libraryConfig.php');
 
         try {
             // Instantiate our PDO Database Object
@@ -308,7 +310,7 @@ class DataLayer
      */
     public function createCheckoutSession($amount, $success_url, $cancel_url)
     {
-        \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+        \Stripe\Stripe::setApiKey($_ENV['STRIPE_API_KEY']);
         $session = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
             'line_items' => [[
@@ -338,8 +340,8 @@ class DataLayer
      */
     public function handleSuccess($sessionId, $f3)
     {
-        require_once($_SERVER['DOCUMENT_ROOT'].'/../libraryConfig.php');
-        \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+        require_once($_SERVER['DOCUMENT_ROOT'].'/libraryConfig.php');
+        \Stripe\Stripe::setApiKey($_ENV['STRIPE_API_KEY']);
         $session = \Stripe\Checkout\Session::retrieve($sessionId);
 
         if ($f3->exists('SESSION.userId')) {

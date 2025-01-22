@@ -1,114 +1,109 @@
 <body>
-<!--Header-->
-<include href="views/header.html" with="title=Admin - All Users"></include>
-<include href="views/navbar.html" with="active=admin"></include>
-
-<div class="container py-5">
-    <h1 class="text-center mb-4">All Users</h1>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Role</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-        </tr>
-        </thead>
-        <tbody>
-        <repeat group="{{ @users }}" value="{{ @user }}">
+    <!--Header-->
+    <include href="views/header.html" with="title=Admin - All Users"></include>
+    <include href="views/navbar.html" with="active=admin"></include>
+    
+    <div class="container py-5">
+        <h1 class="text-center mb-4">All Users</h1>
+        <table class="table table-striped">
+            <thead>
             <tr>
-                <td>{{ @user.id }}</td>
-                <td>{{ @user.role }}</td>
-                <td>{{ @user.first }}</td>
-                <td>{{ @user.last }}</td>
-                <td>{{ @user.email }}</td>
+                <th>ID</th>
+                <th>Role</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
             </tr>
-        </repeat>
-        </tbody>
-    </table>
-
-    <h1 class="text-center mb-4">All Checked Out Items</h1>
-    <div class="d-flex my-3">
-        <button type="button" class="btn btn-primary m-auto"
-                data-bs-toggle="modal"
-                data-bs-target="#emailModal">
-            Send Overdue Item Reminder To All Users With Late Items
-        </button>
-
-    </div>
-    <div class="d-flex mb-4">
-        <check if="{{@SESSION.lastOverdueEmailDate}}">
-            <p class="m-auto err">Last overdue email was sent on {{@SESSION.lastOverdueEmailDate}}</p>
-        </check>
-    </div>
-
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Type</th>
-            <th>Title</th>
-            <th>Checked Out Date</th>
-            <th>Return Date</th>
-            <th>User ID</th>
-            <th>Overdue?</th>
-        </tr>
-        </thead>
-        <tbody>
-        <repeat group="{{ @items }}" value="{{ @item }}">
+            </thead>
+            <tbody>
+            <repeat group="{{ @users ?? [] }}" value="{{ @user }}">
+                <tr>
+                    <td>{{ @user.id ?? 'N/A' }}</td>
+                    <td>{{ @user.role ?? 'N/A' }}</td>
+                    <td>{{ @user.first ?? 'N/A' }}</td>
+                    <td>{{ @user.last ?? 'N/A' }}</td>
+                    <td>{{ @user.email ?? 'N/A' }}</td>
+                </tr>
+            </repeat>
+            </tbody>
+        </table>
+    
+        <h1 class="text-center mb-4">All Checked Out Items</h1>
+        <div class="d-flex my-3">
+            <button type="button" class="btn btn-primary m-auto"
+                    data-bs-toggle="modal"
+                    data-bs-target="#emailModal">
+                Send Overdue Item Reminder To All Users With Late Items
+            </button>
+        </div>
+        <div class="d-flex mb-4">
+            <check if="{{ isset(@SESSION.lastOverdueEmailDate) && @SESSION.lastOverdueEmailDate }}">
+                <p class="m-auto err">Last overdue email was sent on {{ @SESSION.lastOverdueEmailDate }}</p>
+            </check>
+        </div>
+    
+        <table class="table table-striped">
+            <thead>
             <tr>
-                <td>{{ get_class(@item) == "Book" ? "Book" : "Magazine" }}</td>
-                <td>{{ @item->getTitle() }}</td>
-                <td>{{ @item->getBorrowedDate() }}</td>
-                <td>
-                    <check if="{{DataLayer::isOverdue(@item->getReturnDate())}}">
-                        <true><span class="overdue">{{ @item->getReturnDate() }}</span></true>
-                        <false><span class="not-overdue">{{ @item->getReturnDate() }}</span></false>
-                    </check>
-                </td>
-                <td>{{ @item->getBorrower() }}</td>
-                <td>
-                    <set id="{{@item->getBorrower()}}" />
-                    <check if="{{DataLayer::isOverdue(@item->getReturnDate())}}">
-                        <true><p class="err">Overdue</p></true>
-                        <false></false>
-                    </check>
-
-                </td>
-
+                <th>Type</th>
+                <th>Title</th>
+                <th>Checked Out Date</th>
+                <th>Return Date</th>
+                <th>User ID</th>
+                <th>Overdue?</th>
             </tr>
-        </repeat>
-        </tbody>
-    </table>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5">Overdue Email Reminder</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body m-auto">
-                <p>Send overdue email to all users with overdue items?</p>
-            </div>
-            <div class="modal-footer">
-
-                <form id="save-item-form" method="post" action="overdue-email">
-
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Send Email</button>
-                </form>
+            </thead>
+            <tbody>
+            <repeat group="{{ @items ?? [] }}" value="{{ @item }}">
+                <tr>
+                    <td>{{ isset(@item) && get_class(@item) == "Book" ? "Book" : "Magazine" }}</td>
+                    <td>{{ isset(@item) ? @item->getTitle() ?? 'N/A' : 'N/A' }}</td>
+                    <td>{{ isset(@item) ? @item->getBorrowedDate() ?? 'N/A' : 'N/A' }}</td>
+                    <td>
+                        <check if="{{ isset(@item) && isset(@item->getReturnDate()) && DataLayer::isOverdue(@item->getReturnDate()) }}">
+                            <true><span class="overdue">{{ @item->getReturnDate() ?? 'N/A' }}</span></true>
+                            <false><span class="not-overdue">{{ @item->getReturnDate() ?? 'N/A' }}</span></false>
+                        </check>
+                    </td>
+                    <td>{{ isset(@item) ? @item->getBorrower() ?? 'N/A' : 'N/A' }}</td>
+                    <td>
+                        <set id="{{ @item->getBorrower() ?? '' }}" />
+                        <check if="{{ isset(@item) && isset(@item->getReturnDate()) && DataLayer::isOverdue(@item->getReturnDate()) }}">
+                            <true><p class="err">Overdue</p></true>
+                            <false></false>
+                        </check>
+                    </td>
+                </tr>
+            </repeat>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Overdue Email Reminder</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body m-auto">
+                    <p>Send overdue email to all users with overdue items?</p>
+                </div>
+                <div class="modal-footer">
+                    <form id="save-item-form" method="post" action="overdue-email">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Send Email</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="scripts/admin.js"></script>
-</body>
-</html>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="scripts/admin.js"></script>
+    </body>
+    </html>
+    

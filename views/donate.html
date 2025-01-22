@@ -9,7 +9,12 @@
 </head>
 <body>
 <!-- Header -->
-<include href="views/header.html" with="title=Donate"></include>
+<check if="{{ isset(@title) }}">
+    <include href="views/header.html" with="title=Donate"></include>
+</check>
+<check if="{{ !isset(@title) }}">
+    <include href="views/header.html"></include>
+</check>
 
 <!-- Navbar -->
 <include href="views/navbar.html" with="active=donate"></include>
@@ -17,34 +22,36 @@
 <div class="container py-5">
     <h1 class="text-center mb-4">Donate</h1>
 
-
-    <check if="{{ @message }}">
+    <check if="{{ isset(@message) && @message }}">
         <div class="alert alert-info text-center">
             {{ @message }}
         </div>
     </check>
 </div>
 
-    <form id="donation-form" class="row" action="#" method="post">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
-            <hr class="mt-0">
-            <div class="row g-3">
-                <!-- Amount -->
-                <div class="col-12">
-                    <label for="amount" class="form-label">Amount</label>
-                    <input type="number" class="form-control" name="amount" id="amount" required>
-                </div>
-                <!-- Submit -->
-                <div class="col-12">
-                    <button type="submit" class="container-fluid btn btn-primary fw-medium">Donate</button>
-                </div>
+<form id="donation-form" class="row" action="#" method="post">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <hr class="mt-0">
+        <div class="row g-3">
+            <!-- Amount -->
+            <div class="col-12">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" class="form-control" name="amount" id="amount" required>
+                <check if="{{ isset(@errors['amount']) }}">
+                    <span class="err"> *{{ @errors['amount'] }}</span>
+                </check>
+            </div>
+            <!-- Submit -->
+            <div class="col-12">
+                <button type="submit" class="container-fluid btn btn-primary fw-medium">Donate</button>
             </div>
         </div>
-        <div class="col-md-3"></div>
-    </form>
-</div>
+    </div>
+    <div class="col-md-3"></div>
+</form>
 
 <!-- Required JavaScript -->
-<include href="views/footer.html" ></include>
-
+<include href="views/footer.html"></include>
+</body>
+</html>

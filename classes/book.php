@@ -8,23 +8,23 @@
  */
 class Book extends Item implements JsonSerializable
 {
-    private $_authors;
-    private $_pages;
-    private $_isbn;
-    private $_cover;
+    protected $_authors;
+    protected $_pages;
+    protected $_isbn;
+    protected $_cover;
 
-    public function __construct($itemParams,$bookParams)
+    public function __construct($itemParams, $bookParams)
     {
         parent::__construct($itemParams);
 
-        $this->_authors = $bookParams["authors"];
-        $this->_pages = $bookParams["pages"];
-        $this->_isbn = $bookParams["isbn"];
-        $this->_cover = $bookParams["cover"];
+        $this->_authors = $bookParams["authors"] ?? [];
+        $this->_pages = $bookParams["pages"] ?? 0;
+        $this->_isbn = $bookParams["isbn"] ?? '';
+        $this->_cover = $bookParams["cover"] ?? '';
     }
 
     /**
-     * @return String The name of the authors
+     * @return array The names of the authors
      */
     public function getAuthors()
     {
@@ -32,15 +32,15 @@ class Book extends Item implements JsonSerializable
     }
 
     /**
-     * @param String $authors
+     * @param array $authors
      */
-    public function setAuthors($authors)
+    public function setAuthors(array $authors)
     {
         $this->_authors = $authors;
     }
 
     /**
-     * @return Integer The page count
+     * @return int The page count
      */
     public function getPages()
     {
@@ -48,15 +48,15 @@ class Book extends Item implements JsonSerializable
     }
 
     /**
-     * @param Integer $pages
+     * @param int $pages
      */
-    public function setPages($pages)
+    public function setPages(int $pages)
     {
         $this->_pages = $pages;
     }
 
     /**
-     * @return Integer The ISBN number
+     * @return string The ISBN number
      */
     public function getIsbn()
     {
@@ -64,15 +64,15 @@ class Book extends Item implements JsonSerializable
     }
 
     /**
-     * @param Integer $isbn
+     * @param string $isbn
      */
-    public function setIsbn($isbn)
+    public function setIsbn(string $isbn)
     {
         $this->_isbn = $isbn;
     }
 
     /**
-     * @return String The url to the cover image
+     * @return string The URL to the cover image
      */
     public function getCover()
     {
@@ -80,29 +80,36 @@ class Book extends Item implements JsonSerializable
     }
 
     /**
-     * @param String $cover
+     * @param string $cover
      */
-    public function setCover($cover)
+    public function setCover(string $cover)
     {
         $this->_cover = $cover;
     }
 
-    // Only put properties here that you want serialized.
-    public function jsonSerialize() {
-        return Array(
-            'id'    => $this->_id,
-            'title'   => $this->_title,
-            'description' => $this->_description,
-            'publishedDate'     => $this->_publishedDate,
-            'available' => $this->_available,
-            'borrowedDate'    => $this->_borrowedDate, // example for other objects
-            'returnDate'   => $this->_returnDate,
-            'borrower'   => $this->_borrower,
-            'hold'   => $this->_holds,
-            'authors' => $this->_authors,
-            'pages' => $this->_pages,
-            'isbn' => $this->_isbn,
-            'cover' => $this->_cover
-        );
+    /**
+     * Serializes the book object into JSON format.
+     * 
+     * @return array Serialized representation of the book object.
+     */
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        return [
+            'id'             => $this->_id ?? null,
+            'title'          => $this->_title ?? '',
+            'description'    => $this->_description ?? '',
+            'publishedDate'  => $this->_publishedDate ?? '',
+            'available'      => $this->_available ?? false,
+            'borrowedDate'   => $this->_borrowedDate ?? '',
+            'returnDate'     => $this->_returnDate ?? '',
+            'borrower'       => $this->_borrower ?? null,
+            'holds'          => $this->_holds ?? [],
+            'authors'        => $this->_authors,
+            'pages'          => $this->_pages,
+            'isbn'           => $this->_isbn,
+            'cover'          => $this->_cover
+        ];
     }
 }
+

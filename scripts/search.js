@@ -20,3 +20,9 @@ $('#addModal').on('show.bs.modal', function (event) {
     modal.find('#modal-item-cover').val(book.cover);
     modal.find('#modal-item-cover-preview').attr("src", book.cover);
 });
+
+function clearSearch() {
+    document.getElementById("searchTerm").value = '';  // Clear the input field
+    document.getElementById("clear").value = "1";  // Set hidden input to indicate clear request
+    document.getElementById("search-form").submit();  // Submit the form
+}

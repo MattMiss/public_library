@@ -5,10 +5,15 @@
     Author: Brandon Viorato
     Date: 5/10/24
     File: contact.html
- -->
+-->
 
 <!--Header-->
-<include href="views/header.html" with="title=Contact Us"></include>
+<check if="{{ isset(@title) }}">
+    <include href="views/header.html" with="title=Contact Us"></include>
+</check>
+<check if="{{ !isset(@title) }}">
+    <include href="views/header.html"></include>
+</check>
 
 <body>
 <!--this is navbar-->
@@ -19,7 +24,7 @@
     <!-- Form title -->
     <p class="fs-3 d-flex justify-content-center">Contact</p>
 
-    <check if="{{ @message }}">
+    <check if="{{ isset(@message) && @message }}">
         <div class="alert alert-info text-center">
             {{ @message }}
         </div>
@@ -42,24 +47,24 @@
                 <div class="col-md-6">
                     <label for="lastName" class="form-label">Last Name</label>
                     <input type="text" class="form-control" name="lastName" id="lastName">
-                    <check if="{{ isset(@errors['firstName']) }}">
-                        <span class="err"> *{{ @errors['firstName'] }}</span>
+                    <check if="{{ isset(@errors['lastName']) }}">
+                        <span class="err"> *{{ @errors['lastName'] }}</span>
                     </check>
                 </div>
                 <!-- Email -->
                 <div class="col-12">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com">
-                    <check if="{{ isset(@errors['firstName']) }}">
-                        <span class="err"> *{{ @errors['firstName'] }}</span>
+                    <check if="{{ isset(@errors['email']) }}">
+                        <span class="err"> *{{ @errors['email'] }}</span>
                     </check>
                 </div>
                 <!-- Message -->
                 <div class="col-12">
                     <label for="message" class="form-label">Message</label>
                     <textarea class="form-control" name="message" id="message"></textarea>
-                    <check if="{{ isset(@errors['firstName']) }}">
-                        <span class="err"> *{{ @errors['firstName'] }}</span>
+                    <check if="{{ isset(@errors['message']) }}">
+                        <span class="err"> *{{ @errors['message'] }}</span>
                     </check>
                 </div>
                 <!-- Submit -->

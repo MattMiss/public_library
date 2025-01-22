@@ -102,39 +102,44 @@ class Controller
     {
         $searchTerm = '';
 
-        // If the form has been posted
-        if ($_SERVER['REQUEST_METHOD'] == "POST") {
-
-            // Get the type of book
+        // If the clear button is pressed, reset search results
+        if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['clear']) && $_POST['clear'] == "1") {
+            $this->_f3->set('searchResults', null);
+            $this->_f3->set('searchTerm', null);
+            $this->_f3->clear('SESSION.lastSearchResults');  // Clear session storage
+        }
+        // If the form is submitted for search
+        else if ($_SERVER['REQUEST_METHOD'] == "POST") {
             $printType = $_POST['type'];
 
             if (isset($_POST['searchTerm']) && !empty(trim($_POST['searchTerm']))) {
-                // Get User Input Search Term
                 $searchTerm = trim($_POST['searchTerm']);
-                $searchTerm = str_replace(' ', '%20', $searchTerm); // replace spaces with %20 for api search
+                $searchTerm = str_replace(' ', '%20', $searchTerm); // Replace spaces with %20 for API search
 
-                // Get the search results using curl
+                // Fetch the search results from the API
                 $items = $this->_dataLayer->getSearchResultsCurl($searchTerm, $printType)->items;
 
-                // Create an array of item objects
+                // Convert API response to item objects
                 $itemObjects = $this->_dataLayer->getItemsAsObjects($items);
 
-                // Set searchResults data
+                // Store the search results in framework variables
                 $this->_f3->set('searchResults', $itemObjects);
-
-                // Set searchTerm session variable in order to retain search term after user logs in
                 $this->_f3->set('SESSION.lastSearchResults', $itemObjects);
             }
-        }else {  // GET method
+        } 
+        else {
+            // Load search results from session on GET requests
             if ($this->_f3->get('SESSION.lastSearchResults')) {
                 $this->_f3->set('searchResults', $this->_f3->get('SESSION.lastSearchResults'));
             }
         }
 
-        // Render a search page
+        // Render the search page
         $view = new Template();
         echo $view->render('views/search.html');
     }
+
+
 
     /**
      * Displays the borrowed items for the user.
@@ -142,7 +147,7 @@ class Controller
     function borrows()
     {
         // Set myBorrows data
-        $id = $this->_f3->get("SESSION.userId");
+        $id = $this->_f3->get("SESSION.userId") ?? null;
 
         if ($id){
             // Get users borrowed items from database
@@ -194,7 +199,7 @@ class Controller
                     if (password_verify($password, $hash)) {
                         $this->_f3->set('SESSION["first"]',$first);
                         // set user id
-                        $this->_f3->set('SESSION["userId"]',$id);
+                        $this->_f3->set('SESSION.userId', $id);
                         // set user role
                         $this->_f3->set('SESSION["role"]',$role);
                         if ($role == 0){

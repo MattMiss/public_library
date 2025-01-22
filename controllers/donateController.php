@@ -32,8 +32,11 @@ class DonationController
             $amount = $_POST['amount'];
 
             // Get server and root url
-            $success = "https://" . $_SERVER['HTTP_HOST'] . $this->_f3->BASE . "/success?session_id={CHECKOUT_SESSION_ID}";
-            $cancel = "https://" . $_SERVER['HTTP_HOST'] . $this->_f3->BASE . "/cancel";
+            // $success = "https://" . $_SERVER['HTTP_HOST'] . $this->_f3->BASE . "/success?session_id={CHECKOUT_SESSION_ID}";
+            // $cancel = "https://" . $_SERVER['HTTP_HOST'] . $this->_f3->BASE . "/cancel";
+
+            $success = "http://booklibrary.local/success?session_id={CHECKOUT_SESSION_ID}";
+            $cancel = "http://booklibrary.local/cancel";
 
             $sessionUrl = $this->_dataLayer->createCheckoutSession($amount, $success, $cancel);
 
